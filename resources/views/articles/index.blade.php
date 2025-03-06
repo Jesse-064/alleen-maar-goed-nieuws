@@ -11,6 +11,12 @@
         <a href="{{ route('articles.index', ['filter' => 'all']) }}" class="btn btn-secondary @if($filter === 'all') disabled @endif">Alle Nieuws</a>
     </div>
 
+    <!-- Knop om alle nieuwsartikelen op te halen -->
+    <form action="{{ route('articles.fetchAll') }}" method="POST" class="mb-3">
+        @csrf
+        <button type="submit" class="btn btn-success">Haal alle nieuwsartikelen op</button>
+    </form>
+
     @if($articles->isEmpty())
         <p class="text-muted">Geen nieuws gevonden. Probeer de nieuwsupdate-knop.</p>
     @else
