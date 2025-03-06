@@ -15,7 +15,7 @@ class ArticleController extends Controller
     public function fetchNews()
     {
         // Voer de API-aanroep uit om nieuws op te halen
-        $response = Http::get('https://newsapi.org/v2/everything', [
+        $response = Http::get('https://newsapi.org/v2/top-headlines', [
             'country' => 'us',
             'category' => 'business',
             'apiKey' => env('NEWS_API_KEY'),
