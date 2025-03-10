@@ -9,6 +9,7 @@ Route::get('/', function () {
 // News
 Route::get('/fetch-news', [ArticleController::class, 'fetchNews'])->name('articles.fetch');
 Route::get('/news', [ArticleController::class, 'index'])->name('articles.index');
+Route::post('/articles/fetch-all', [ArticleController::class, 'fetchAllNews'])->name('articles.fetchAll');
 
 Route::get('/about', function () {
     return view('about');
@@ -17,8 +18,3 @@ Route::get('/about', function () {
 Route::get('/contact', function () {
     return view('contact');
 });
-
-// News
-Route::get('/fetch-news', [ArticleController::class, 'fetchNews'])->name('articles.fetch');
-Route::get('/news', [ArticleController::class, 'index'])->name('articles.index');
-Route::post('/articles/fetch-all', [ArticleController::class, 'fetchAllNews'])->name('articles.fetchAll');
