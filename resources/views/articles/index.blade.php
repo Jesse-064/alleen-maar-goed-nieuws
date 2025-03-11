@@ -8,7 +8,7 @@
     <!-- Filter links -->
     <div class="mb-3">
         <a href="{{ route('articles.index', ['filter' => 'positive']) }}" class="btn btn-primary @if($filter === 'positive') disabled @endif">Positief Nieuws</a>
-        <a href="{{ route('articles.index', ['filter' => 'all']) }}" class="btn btn-secondary @if($filter === 'all') disabled @endif">Alle Nieuws</a>
+        <a href="{{ route('articles.index') }}" class="btn btn-secondary">Alle Nieuws</a>
     </div>
 
     <!-- Knop om alle nieuwsartikelen op te halen -->
@@ -24,7 +24,7 @@
             @foreach($articles as $article)
                 <li class="list-group-item">
                     <h5>
-                        <a href="{{ route('articles.show', ['id' => urlencode($article->title)]) }}">
+                    <a href="{{ route('articles.show', ['id' => $article->id]) }}">
                             {{ $article->title }}
                         </a>
                     </h5>

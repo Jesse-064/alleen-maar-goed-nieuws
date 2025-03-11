@@ -21,7 +21,7 @@
                     </p>
 
                     <div class="d-flex justify-content-between mt-4">
-                        <a href="{{ route('news.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('articles.index') }}" class="btn btn-secondary">
                             Terug naar alle nieuwsartikelen
                         </a>
 

@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use App\Models\Article;
+use Illuminate\Support\Facades\Http;
 
 class ArticleController extends Controller
 {
@@ -53,7 +53,7 @@ class ArticleController extends Controller
             'sortBy' => 'publishedAt',
             'from' => now()->subDays(7)->format('Y-m-d'),
             'pageSize' => 50,
-            'q' => 'breaking news' // Nodige parameter om bredere zoekopdrachten toe te staan
+            'q' => 'breaking news'
         ]);
 
         if (!$response->successful()) {
@@ -141,23 +141,19 @@ class ArticleController extends Controller
 
         Log::info('Opgehaalde artikelen:', $articles->toArray());
 
+        // Verwijs naar de view 'articles.index'
         return view('articles.index', compact('articles', 'filter'));
     }
 
     /**
-     * Toon een specifiek artikel op de detailpagina.
+     * Toon details van een specifiek artikel.
      */
     public function show($id)
     {
-        // Zoek het artikel op basis van het id
-        $article = Article::find($id);
-
-        // Als het artikel niet gevonden wordt, geef een 404 error
-        if (!$article) {
-            abort(404, 'Artikel niet gevonden');
-        }
-
-        // Geef de artikelinformatie door aan de view
-        return view('articles.show', compact('article'));
+        // Haal artikel op op basis van de ID
+        $article = Article::findOrFail($id);
+    
+        return view('show', compact('article')); // Zorg ervoor dat je naar de juiste view verwijst.
     }
+    
 }
