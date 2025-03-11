@@ -143,4 +143,21 @@ class ArticleController extends Controller
 
         return view('articles.index', compact('articles', 'filter'));
     }
+
+    /**
+     * Toon een specifiek artikel op de detailpagina.
+     */
+    public function show($id)
+    {
+        // Zoek het artikel op basis van het id
+        $article = Article::find($id);
+
+        // Als het artikel niet gevonden wordt, geef een 404 error
+        if (!$article) {
+            abort(404, 'Artikel niet gevonden');
+        }
+
+        // Geef de artikelinformatie door aan de view
+        return view('articles.show', compact('article'));
+    }
 }

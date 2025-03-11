@@ -3,17 +3,17 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArticleController;
 
+// Homepage - Lijst van artikelen
 Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
-
-// News
-Route::get('/fetch-news', [ArticleController::class, 'fetchNews'])->name('articles.fetch');
 Route::get('/news', [ArticleController::class, 'index'])->name('articles.index');
+
+// Ophalen van nieuwsartikelen via API
+Route::get('/fetch-news', [ArticleController::class, 'fetchNews'])->name('articles.fetch');
 Route::post('/articles/fetch-all', [ArticleController::class, 'fetchAllNews'])->name('articles.fetchAll');
 
-Route::get('/about', function () {
-    return view('about');
-});
+// Detailpagina voor nieuwsartikelen
+Route::get('/articles/{id}', [ArticleController::class, 'show'])->name('articles.show');
 
-Route::get('/contact', function () {
-    return view('contact');
-});
+// Statische pagina's
+Route::view('/about', 'about')->name('about');
+Route::view('/contact', 'contact')->name('contact');

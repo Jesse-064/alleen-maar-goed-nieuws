@@ -23,7 +23,11 @@
         <ul class="list-group">
             @foreach($articles as $article)
                 <li class="list-group-item">
-                    <h5><a href="{{ $article->url }}" target="_blank">{{ $article->title }}</a></h5>
+                    <h5>
+                        <a href="{{ route('articles.show', ['id' => urlencode($article->title)]) }}">
+                            {{ $article->title }}
+                        </a>
+                    </h5>
                     <p>{{ $article->content }}</p>
                     <small class="text-muted">Bron: {{ $article->source }}</small>
                 </li>
