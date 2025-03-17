@@ -23,18 +23,14 @@ class ArticleController extends Controller
     ];
     public function fetchNews(Request $request)
     {
-        $category = $request->input('category', 'general');
-
         $response = Http::get('https://newsapi.org/v2/top-headlines', [
             'country' => 'us',
             'category' => $category,
             'apiKey' => env('NEWS_API_KEY'),
         ]);
 
-        // Log de volledige response om te zien wat er terugkomt
         Log::info('API Response:', $response->json());
 
-        // Controleer of de API-aanroep succesvol was
         if (!$response->successful()) {
             Log::error('API-aanroep mislukt', [
                 'status' => $response->status(),
@@ -43,7 +39,6 @@ class ArticleController extends Controller
             return back()->with('error', 'Kon geen nieuws ophalen. Controleer je API-sleutel.');
         }
 
-        // Haal de artikelen uit de response
         $articles = $response->json()['articles'] ?? [];
 
         if (empty($articles)) {
@@ -51,19 +46,58 @@ class ArticleController extends Controller
             return back()->with('error', 'Geen nieuwsartikelen gevonden.');
         }
 
-        // Verwerk en sla de artikelen op in de database
+        $this->storeArticles($articles);
+
+        return redirect()->route('articles.index')->with('success', 'Nieuws succesvol bijgewerkt!');
+    }
+
+    /**
+     * Haal alle nieuwsartikelen op zonder beperkingen.
+     */
+    public function fetchAllNews()
+    {
+        $response = Http::get('https://newsapi.org/v2/everything', [
+            'apiKey' => env('NEWS_API_KEY'),
+            'language' => 'en',
+            'sortBy' => 'publishedAt',
+            'from' => now()->subDays(7)->format('Y-m-d'),
+            'pageSize' => 50,
+            'q' => 'breaking news' // Nodige parameter om bredere zoekopdrachten toe te staan
+        ]);
+
+        if (!$response->successful()) {
+            Log::error('API-aanroep mislukt', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+            return back()->with('error', 'Kon geen nieuws ophalen.');
+        }
+
+        $articles = $response->json()['articles'] ?? [];
+
+        if (empty($articles)) {
+            return back()->with('error', 'Geen nieuwsartikelen gevonden.');
+        }
+
+        $this->storeArticles($articles);
+
+        return redirect()->route('articles.index')->with('success', 'Alle nieuwsartikelen opgehaald!');
+    }
+
+    /**
+     * Sla artikelen op in de database als ze nog niet bestaan.
+     */
+    private function storeArticles($articles)
+    {
         foreach ($articles as $news) {
             if (!isset($news['title'], $news['url'], $news['source']['name'])) {
-                continue; // Sla onvolledige artikelen over
+                continue;
             }
 
-            // Voer de sentimentanalyse uit
             $sentiment = $this->analyzeSentiment($news['title'], $news['url']);
 
-            // Log het artikel dat wordt opgeslagen
             Log::info('Artikel wordt opgeslagen:', ['url' => $news['url'], 'title' => $news['title']]);
 
-            // Update of creëer een nieuw artikel
             Article::updateOrCreate(
                 ['url' => $news['url']],
                 [
@@ -74,9 +108,6 @@ class ArticleController extends Controller
                 ]
             );
         }
-
-        // Redirect naar de artikelpagina met een succesbericht
-        return redirect()->route('articles.index')->with('success', 'Nieuws succesvol bijgewerkt!');
     }
 
     /**
@@ -89,25 +120,14 @@ class ArticleController extends Controller
         }
 
         $positiveWords = [
-            'great',
-            'fantastic',
-            'success',
-            'happiness',
-            'beautiful',
-            'hopeful',
-            'gain',
-            'prosperous',
-            'optimistic',
-            'happy',
-            'win',
-            'progress',
-            'breakthrough'
+            'great', 'fantastic', 'success', 'happiness', 'beautiful',
+            'hopeful', 'gain', 'prosperous', 'optimistic', 'happy',
+            'win', 'progress', 'breakthrough'
         ];
 
         $text = mb_strtolower($text);
         $url = mb_strtolower($url);
 
-        // Zoek naar positieve woorden in de titel
         foreach ($positiveWords as $word) {
             if (stripos($text, $word) !== false || stripos($url, $word) !== false) {
                 return 'positive';
@@ -117,22 +137,18 @@ class ArticleController extends Controller
         return 'neutral';
     }
 
-
     /**
      * Toon alle artikelen (of gefilterd op positief nieuws).
      */
     public function index(Request $request)
     {
-        // Haal het filter op uit de querystring ('all' of 'positive')
         $filter = $request->query('filter', 'all');
         $categories = $this->categories;
 
-        // Als het filter 'positive' is, haal alleen positieve artikelen op
         $articles = $filter === 'positive'
-            ? Article::sentiment('positive')->latest()->get()  // Gebruik de sentiment scope
-            : Article::latest()->get();  // Haal alle artikelen op
+            ? Article::where('sentiment', 'positive')->latest()->get()
+            : Article::latest()->get();
 
-        // Log de opgehaalde artikelen
         Log::info('Opgehaalde artikelen:', $articles->toArray());
 
         return view('articles.index', compact('articles', 'filter', 'categories'));

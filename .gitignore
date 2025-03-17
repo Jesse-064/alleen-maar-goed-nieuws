@@ -19,3 +19,4 @@ auth.json
 /.vscode
 /.zed
 /vendor
+composer.lock

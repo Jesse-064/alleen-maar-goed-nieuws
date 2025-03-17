@@ -1,9 +1,7 @@
-@extends('layouts.app')
-
-@section('title', $filter === 'positive' ? 'Positief Nieuws' : 'Nieuws')
-
-@section('content')
-    <h1 class="mb-4">{{ $filter === 'positive' ? 'Positief Nieuws' : 'Alle Nieuws' }}</h1>
+<x-layout :title="$filter === 'positive' ? 'Positief Nieuws' : 'Nieuws'">
+    <header class="bg-white mb-4">
+        <h1 class="mb-4">{{ $filter === 'positive' ? 'Positief Nieuws' : 'Alle Nieuws' }}</h1>
+    </header>
 
     <!-- Filter links -->
     <div class="mb-3">
@@ -26,6 +24,12 @@
         <a href="{{ route('articles.index', ['filter' => 'all']) }}" class="btn btn-secondary @if($filter === 'all') disabled @endif">Alle Nieuws</a>
     </div>
 
+    <!-- Button to fetch all news articles -->
+    <form action="{{ route('articles.fetchAll') }}" method="POST" class="mb-3">
+        @csrf
+        <button type="submit" class="btn btn-success">Haal alle nieuwsartikelen op</button>
+    </form>
+
     @if($articles->isEmpty())
         <p class="text-muted">Geen nieuws gevonden. Probeer de nieuwsupdate-knop.</p>
     @else
@@ -39,4 +43,4 @@
             @endforeach
         </ul>
     @endif
-@endsection
+</x-layout>
