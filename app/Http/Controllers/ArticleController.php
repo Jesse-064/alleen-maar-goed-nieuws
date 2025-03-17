@@ -23,6 +23,8 @@ class ArticleController extends Controller
     ];
     public function fetchNews(Request $request)
     {
+        $category = $request->input('category', 'general');
+
         $response = Http::get('https://newsapi.org/v2/top-headlines', [
             'country' => 'us',
             'category' => $category,
