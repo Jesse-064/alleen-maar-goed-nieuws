@@ -16,10 +16,8 @@
         @endforeach
     </select>
 </div>
-
-<button type="submit" class="btn btn-primary">Fetch News</button>
-
 </form>
+        <button type="submit" class="btn btn-primary">Fetch News</button>
         <a href="{{ route('articles.index', ['filter' => 'positive']) }}" class="btn btn-primary @if($filter === 'positive') disabled @endif">Positief Nieuws</a>
         <a href="{{ route('articles.index', ['filter' => 'all']) }}" class="btn btn-secondary @if($filter === 'all') disabled @endif">Alle Nieuws</a>
     </div>
