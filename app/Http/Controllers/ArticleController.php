@@ -23,14 +23,9 @@ class ArticleController extends Controller
     ];
     public function fetchNews(Request $request)
     {
-<<<<<<< Updated upstream
-        // Voer de API-aanroep uit om nieuws op te halen
-        $response = Http::get('https://newsapi.org/v2/everything', [
-=======
         $category = $request->input('category', 'general');
 
         $response = Http::get('https://newsapi.org/v2/top-headlines', [
->>>>>>> Stashed changes
             'country' => 'us',
             'category' => $category,
             'apiKey' => env('NEWS_API_KEY'),
@@ -140,11 +135,6 @@ class ArticleController extends Controller
         // Log de opgehaalde artikelen
         Log::info('Opgehaalde artikelen:', $articles->toArray());
 
-<<<<<<< Updated upstream
-        // Geef de artikelen door aan de view
-        return view('articles.index', compact('articles', 'filter'));
-=======
         return view('articles.index', compact('articles', 'filter', 'categories'));
->>>>>>> Stashed changes
     }
 }
