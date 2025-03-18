@@ -12,11 +12,22 @@ class ArticleController extends Controller
     /**
      * Haal nieuwsartikelen op en sla ze op in de database.
      */
-    public function fetchNews()
+
+     protected $categories = [
+        'business',
+        'entertainment',
+        'health',
+        'science',
+        'sports',
+        'technology',
+    ];
+    public function fetchNews(Request $request)
     {
+        $category = $request->input('category', 'general');
+
         $response = Http::get('https://newsapi.org/v2/top-headlines', [
             'country' => 'us',
-            'category' => 'business',
+            'category' => $category,
             'apiKey' => env('NEWS_API_KEY'),
         ]);
 
@@ -134,6 +145,7 @@ class ArticleController extends Controller
     public function index(Request $request)
     {
         $filter = $request->query('filter', 'all');
+        $categories = $this->categories;
 
         $articles = $filter === 'positive'
             ? Article::where('sentiment', 'positive')->latest()->get()
@@ -141,6 +153,6 @@ class ArticleController extends Controller
 
         Log::info('Opgehaalde artikelen:', $articles->toArray());
 
-        return view('articles.index', compact('articles', 'filter'));
+        return view('articles.index', compact('articles', 'filter', 'categories'));
     }
 }

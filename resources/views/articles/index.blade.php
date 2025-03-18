@@ -5,6 +5,19 @@
 
     <!-- Filter links -->
     <div class="mb-3">
+    <form action="{{ route('articles.fetch') }}" method="GET">
+
+<div class="mb-3">
+    <label for="category" class="form-label">Select Category</label>
+    <select name="category" id="category" class="form-select">
+        <option value="">Select Category</option>
+        @foreach($categories as $category)
+            <option value="{{ $category }}">{{ ucfirst($category) }}</option>
+        @endforeach
+    </select>
+</div>
+</form>
+        <button type="submit" class="btn btn-primary">Fetch News</button>
         <a href="{{ route('articles.index', ['filter' => 'positive']) }}" class="btn btn-primary @if($filter === 'positive') disabled @endif">Positief Nieuws</a>
         <a href="{{ route('articles.index', ['filter' => 'all']) }}" class="btn btn-secondary @if($filter === 'all') disabled @endif">Alle Nieuws</a>
     </div>
