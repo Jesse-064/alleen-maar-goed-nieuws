@@ -17,7 +17,7 @@ class AccountController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        dd($user);
+        // dd($user);
         return view('account.settings', compact('user'));
     }
 
@@ -29,28 +29,24 @@ class AccountController extends Controller
      */
     public function update(Request $request)
     {
+        // Controleer of de gebruiker is ingelogd
         $user = Auth::user();
 
-        // Validatie van de ingevoerde gegevens
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Je moet ingelogd zijn om je instellingen te wijzigen.');
+        }
+
+        // Validatie van invoer
         $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'first_name' => 'nullable|string|max:255',
+            'last_name' => 'nullable|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        // Update de gebruikersgegevens
-        $user->first_name = $validated['first_name'];
-        $user->last_name = $validated['last_name'];
-        $user->email = $validated['email'];
+        // Update de gebruiker
+        $user->updateUser($validated);
 
-        // Alleen het wachtwoord bijwerken als het veld is ingevuld
-        if (!empty($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
-        }
-
-        $user->save();
-
-        return redirect()->route('account.settings')->with('success', 'Account settings updated successfully.');
+        return redirect()->back()->with('success', 'Instellingen bijgewerkt!');
     }
 }

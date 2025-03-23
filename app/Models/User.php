@@ -36,4 +36,12 @@ class User extends Authenticatable
         ];
     }
 
+    public function updateUser(array $data)
+    {
+        if (isset($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        }
+
+        return $this->update($data);
+    }
 }
