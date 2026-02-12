@@ -18,5 +18,6 @@ auth.json
 /.nova
 /.vscode
 /.zed
+composer.phar
 /vendor
 composer.lock
